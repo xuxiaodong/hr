@@ -1,0 +1,33 @@
+#!/usr/bin/env perl
+#
+# name     : hr, hr in Perl
+# author   : Xu Xiaodong <xxdlhy@gmail.com>
+# license  : GPLv2
+# created  : 2014 Mar 05
+# modified : 2014 Mar 05
+#
+
+use strict;
+use warnings;
+
+@ARGV = ('#') unless @ARGV;
+hr(@ARGV);
+
+sub get_term_col {
+    require 'sys/ioctl.ph';
+    die "no TIOCGWINSZ" unless defined &TIOCGWINSZ;
+    open my $tty, '+<', '/dev/tty' or die "no tty: $!";
+    my $winsize = '';
+    return unless ioctl( $tty, &TIOCGWINSZ, $winsize );
+    my $col = ( unpack( 'S4', $winsize ) )[1];
+    return $col;
+}
+
+sub hr {
+    for my $symbol (@_) {
+        my $col = get_term_col() || 80;
+        my $len = length $symbol;
+        $col /= $len if $len > 1;
+        print sprintf "%s\n", $symbol x $col;
+    }
+}

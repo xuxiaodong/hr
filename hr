@@ -4,7 +4,7 @@
 # author   : Xu Xiaodong <xxdlhy@gmail.com>
 # license  : GPLv2
 # created  : 2014 Mar 05
-# modified : 2014 Mar 05
+# modified : 2014 Mar 06
 #
 
 use strict;
@@ -14,8 +14,9 @@ use warnings;
 hr(@ARGV);
 
 sub get_term_col {
-    require 'sys/ioctl.ph';
-    die "no TIOCGWINSZ" unless defined &TIOCGWINSZ;
+    eval { require 'sys/ioctl.ph'; };
+    return if $@;
+    return unless defined &TIOCGWINSZ;
     open my $tty, '+<', '/dev/tty' or die "no tty: $!";
     my $winsize = '';
     return unless ioctl( $tty, &TIOCGWINSZ, $winsize );

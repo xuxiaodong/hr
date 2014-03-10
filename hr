@@ -4,7 +4,7 @@
 # author   : Xu Xiaodong <xxdlhy@gmail.com>
 # license  : GPLv2
 # created  : 2014 Mar 05
-# modified : 2014 Mar 06
+# modified : 2014 Mar 10
 #
 
 use strict;
@@ -17,7 +17,7 @@ sub get_term_col {
     eval { require 'sys/ioctl.ph'; };
     return if $@;
     return unless defined &TIOCGWINSZ;
-    open my $tty, '+<', '/dev/tty' or die "no tty: $!";
+    open my $tty, '+<', '/dev/tty' or return;
     my $winsize = '';
     return unless ioctl( $tty, &TIOCGWINSZ, $winsize );
     my $col = ( unpack( 'S4', $winsize ) )[1];
@@ -29,6 +29,6 @@ sub hr {
         my $col = get_term_col() || 80;
         my $len = length $symbol;
         $col /= $len if $len > 1;
-        print sprintf "%s\n", $symbol x $col;
+        printf "%s\n", $symbol x $col;
     }
 }
